@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <input type="text" id="message">
+    <button type="button" onclick="sendMessage()">Name</button>
+    <button type="button" onclick="sendConversation()">Message</button>    
+    <button type="button" onclick="test()">Test</button>
+    <div id="users">
+         <ul id="online">
+
+         </ul>  
+    </div>
+    <script>
+        var socket = new WebSocket("ws://localhost:8080")
+        var counter = 0;
+        // <!--untuk nama user-->
+        var name;
+        // <!--untuk menyimpan list user-->
+        var users = [
+            {"username": "erik1"},
+            {"username": "erik2"},
+            {"username": "erik3"}
+        ];
+        socket.onmessage = function (ev) {
+            // console.log(ev.data);
+            // console.log('dari atas')
+            if (ev.data instanceof Blob) {
+                var reader = new FileReader()
+                reader.onload = function() {
+                    var json = JSON.parse(reader.result)
+                    processJson(json)
+                }
+                reader.readAsText(ev.data)
+            }
+        }
+
+        function processJson(json) {
+            console.log(json)
+            var clazz = json['@class']
+            handlers = [
+                {
+                    '@class':
+                        'com.desdulianto.learning.imvertx.packet.LoginNotification',
+                    handler: loginNotif
+                },
+                {
+                    '@class':
+                        'com.desdulianto.learning.imvertx.packet.ConversationMessage',
+                    handler: conversation
+                },
+                {
+                    '@class':
+                        'com.desdulianto.learning.imvertx.packet.OnlineUsers',
+                    handler: onlineUsers    
+                }
+            ]
+
+            var handler = handlers.find(function(x) {return x['@class'] === clazz})
+            if (handler !== undefined)
+                handler.handler(json)
+            else
+                // buka web developer tool web console
+                console.log(json)
+        }
+        
+        // <!--Notifikasi ketika user baru login-->
+        function loginNotif(json) {
+            // <!--alert(json.user.username + ' becomes online')-->
+            console.log(window.name)
+            if(json['user']['username'] != this.name) {
+                var newUser = document.createElement("li");
+                newUser.id = json['user']['username']
+                newUser.innerHTML = json['user']['username']
+                console.log(newUser)
+                var output = document.getElementById('online')
+                output.appendChild(newUser);
+            }
+
+        //    users.add(json['user'])
+            // requestOnlineUsers();
+        }
+        // <!--Menerima online users-->
+        function onlineUsers(json) {
+            // <!--console.log(json);-->
+            // users = json['users']
+            alert("masuk online")
+            console.log(users)
+        }
+        // <!--Menerima Message-->
+        function conversation(json) {
+            console.log(json);
+        }
+        // <!--Untuk Send Command(Username)-->
+        function sendMessage() {
+            var input = document.querySelector('#message')
+            var text = input.value
+            var loginMessage = {
+                '@class': 'com.desdulianto.learning.imvertx.packet.LoginMessage',
+                username: text,
+                password: ''
+            }
+            window.name = text
+            console.log(this.name)
+            socket.send(JSON.stringify(loginMessage))
+            input.value = ''
+            input.focus()
+        }
+        // <!--Untuk mengirimkan Pesan-->
+        function sendConversation() {
+            var input = document.querySelector('#message')
+            var text = input.value
+            var convMessage = {
+                '@class': 'com.desdulianto.learning.imvertx.packet.ConversationMessage',
+                'from' : name,
+                'to': 'agus',
+                'message': text
+            }
+            socket.send(JSON.stringify(convMessage))
+            input.value = ''
+            input.focus()
+        }
+        // <!--Untuk Mendapatkan User yang online--> 
+        function requestOnlineUsers() {
+            var requestMessage = {
+                '@class': 'com.desdulianto.learning.imvertx.packet.ListOnlineUsersMessage'
+            }
+            socket.send(JSON.stringify(requestMessage))
+        }
+
+    </script>
+</body>
+</html>

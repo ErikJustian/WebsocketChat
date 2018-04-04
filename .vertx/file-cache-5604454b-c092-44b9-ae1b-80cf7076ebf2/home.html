@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Trivia &mdash;  Home</title>
+
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="css/animate.css">
+
+  <link rel="stylesheet" type="text/css" media="screen" href="css/pre.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
+</head>
+<body id="body">
+    <!-- Welcome window -->
+    <div id="pre">
+      <div class="pre-container">
+          <div class="pre-centered">
+              <h2 class="text-white">Welcome to Chat Box</h2>
+              <hr class="border-white w-25 mb-5">
+              <input type="text" id="input-username" name="" value="" placeholder="Input your username" autofocus>
+
+              <button type="button" id="submit-username" onclick="sendMessageLogin()" class="">OK, That's me!</button>
+          </div>
+      </div>
+    </div>
+
+    <div id="main" class="wrapper">
+        <div class="topbar col-12">
+
+            <div class="menu-btn">
+               <img src="res/people.png" alt="people" id="people"/>
+            </div>
+            <!-- List online users -->
+            <ul id="menu">
+               <li class="menu-header">User List</li>
+
+            </ul>
+
+            <h1 class="text-center">Chat Box</h1>
+        </div>
+        <div class="mainbar col-12">
+            <div class="mb-wrapper">
+                <div class="text-center connected-to">
+                   <div id="connected-username" class="connected-username">
+                       <!-- Username -->
+                        Alex Lee
+                   </div>
+                </div>
+                <div id="chatter">
+                    <!-- Sender
+                    <section id="request-box" class="mb-content wow fadeInUp text-left" data-wow-delay=".2s">
+                        <h4 id="request-header" class="r-username pb-1 pr-2 pl-2">Alex Lee</h4>
+                        <p id="request-msg" class="r-msg m-2 mt-3">Hey Bro! Long time no see! :)</p>
+                    </section>
+                        Receiver
+                    <section id="request-box2" class="mb-content wow fadeInUp text-right" data-wow-delay=".2s">
+                        <h4 id="request-header2" class="r-username pb-1 pr-2 pl-2">Sarah Lee</h4>
+                        <p id="request-msg2" class="r-msg m-2 mt-3">Yo!</p>
+                    </section> -->
+                </div>
+            </div>
+        </div>
+        <div class="bottombar fixed-bottom">
+            <div class="bb-wrapper">
+                <div class="ui-text-box">
+                    <input type="text" class="ui-text" placeholder="Input your message...">
+                </div>
+                <div class="ui-btn-box">
+                    <button type="submit" id="submit" onclick="loadChat()" class="ui-btn btn-lg btn-outline-dark">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+             integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+             crossorigin="anonymous"></script>
+     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"-->
+             <!--integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"-->
+             <!--crossorigin="anonymous"></script>-->
+     <!--<script src="js/bootstrap.min.js"></script>-->
+    <script src="js/main.js"></script>
+    <script src="js/WOW.min.js"></script>
+    <script>
+        var name;
+        var target;
+        var chat_message;
+        var pre = document.getElementById("pre");
+        pre.style.transition = ".5s ease-in-out";
+
+        new WOW().init();
+        var socket = new WebSocket("ws://localhost:8080")
+        // Untuk pilih user chat
+        function selectUser(id) {
+            // this.target = document.getElementById(id)
+            $("#menu").toggle();
+            window.target = id;
+            loadChat(id);
+            console.log(window.target)
+        }
+        // Load chat
+        function loadChat(id) {
+            // Ingat hapus
+            id = "wilson"
+            chat_message = [
+                {
+                    "username": "wilson",
+                    "chat": [
+                        {"type": "to", "content": "Hi i am a bigger than this"},
+                        {"type": "from", "content": "Hi i am a bigger than this"}
+                    ]
+                },
+                {
+                    "username": "ronaldo",
+                    "chat": [
+                        {"type": "to", "content": "Hi i am a bigger than this"},
+                        {"type": "from", "content": "Hi i am a bigger than this"}
+                    ]
+                }
+            ]
+            chat_message.forEach(element => {
+                console.log(element)
+                if(element.username == id) {
+                    console.log("abc")
+                    element.chat.forEach(chat => {
+                        wrapper = document.createElement('section')
+                        if (chat.type = "to") {
+                            wrapper.class = "mb-content wow fadeInUp text-left"
+                        } else {
+                            wrapper.class = "mb-content wow fadeInUp text-right"
+                        }
+                        // Animasi ingat serach
+                        // wrapper.datawowdelay = ".2s"
+
+                        isi = document.createElement('p')
+                        isi.class = "r-msg m-2 mt-3"
+                        sender = document.createElement('h4')
+                        sender.class = "r-username pb-1 pr-2 pl-2"
+                        wrapper.appendChild(sender)
+                        wrapper.appendChild(isi)
+                        document.getElementById("chatter").appendChild(wrapper)
+                    })
+                }
+            });
+        }
+        socket.onmessage = function (ev) {
+            // console.log(ev.data);
+            // console.log('dari atas')
+            if (ev.data instanceof Blob) {
+                var reader = new FileReader()
+                reader.onload = function() {
+                    var json = JSON.parse(reader.result)
+                    processJson(json)
+                }
+                reader.readAsText(ev.data)
+            }
+        }
+
+        function processJson(json) {
+            console.log(json)
+            var clazz = json['@class']
+            handlers = [
+                {
+                    '@class':
+                        'com.desdulianto.learning.imvertx.packet.LoginNotification',
+                    handler: loginNotif
+                },
+                {
+                    '@class':
+                        'com.desdulianto.learning.imvertx.packet.LogoutNotification',
+                    handler: logoutNotif
+                },
+                {
+                    '@class':
+                        'com.desdulianto.learning.imvertx.packet.ConversationMessage',
+                    handler: conversation
+                },
+                {
+                    '@class':
+                        'com.desdulianto.learning.imvertx.packet.OnlineUsers',
+                    handler: onlineUsers    
+                }
+            ]
+
+            var handler = handlers.find(function(x) {return x['@class'] === clazz})
+            if (handler !== undefined)
+                handler.handler(json)
+            else
+                // buka web developer tool web console
+                console.log(json)
+        }
+        // Response Function
+        // <!--Notifikasi ketika user baru login-->
+        function loginNotif(json) {
+            // <!--alert(json.user.username + ' becomes online')-->
+            if(json['user']['username'] != window.name) {
+                var newUser = document.createElement("li");
+                newUser.id = json['user']['username']
+                newUser.innerHTML = json['user']['username']
+                // Onclick untuk pilih user
+                newUser.onclick = function() {
+                    alert(newUser.id);
+                    selectUser(newUser.id)
+                }
+                console.log(newUser)
+                var output = document.getElementById('menu')
+                output.appendChild(newUser);
+            }
+        }
+        // notifikasi user keluar
+        function logoutNotif(json) {
+            console.log(json['user']['username'])
+            var offlineUser = document.getElementById(json['user']['username'])            
+            var output = document.getElementById('menu')
+            output.removeChild(offlineUser)
+        }
+        // <!--Menerima online users-->
+        function onlineUsers(json) {
+            json['users'].forEach(element => {
+                var newUser = document.createElement("li");
+                newUser.id = element['username']
+                newUser.innerHTML = element['username']
+                newUser.onclick = function() {
+                    // Ganti chat dengan user lain
+                    selectUser(newUser.id)
+                }
+                var output = document.getElementById('menu')
+                console.log(output)
+                output.appendChild(newUser);
+            });
+        }
+        // <!--Menerima Message-->
+        function conversation(json) {
+            console.log(json);
+        }
+
+        // Request Function
+        // <!--Untuk Send Command(Username)-->
+        function sendMessageLogin() {
+            var input = document.querySelector('#input-username')
+            var text = input.value
+            var loginMessage = {
+                '@class': 'com.desdulianto.learning.imvertx.packet.LoginMessage',
+                username: text,
+                password: ''
+            }
+            window.name = text
+            console.log(this.name)
+            socket.send(JSON.stringify(loginMessage))
+            input.value = ''
+            input.focus()
+            requestOnlineUsers();
+            $("#main").show();
+            pre.style.animation = "zoomOut .8s";
+            pre.style.visibility = "hidden";
+            pre.remove()
+            document.getElementById("connected-username").innerHTML = window.name
+        }
+
+        // <!--Untuk mengirimkan Pesan-->
+        function sendConversation() {
+            var input = document.querySelector('#message')
+            var text = input.value
+            var convMessage = {
+                '@class': 'com.desdulianto.learning.imvertx.packet.ConversationMessage',
+                'from' : name,
+                'to': 'agus',
+                'message': text
+            }
+            socket.send(JSON.stringify(convMessage))
+            input.value = ''
+            input.focus()
+        }
+        // <!--Untuk Mendapatkan User yang online--> 
+        function requestOnlineUsers() {
+            var requestMessage = {
+                '@class': 'com.desdulianto.learning.imvertx.packet.ListOnlineUsersMessage'
+            }
+            socket.send(JSON.stringify(requestMessage))
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Trivia &mdash;  Home</title>
+
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="css/animate.css">
+
+  <link rel="stylesheet" type="text/css" media="screen" href="css/pre.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
+</head>
+<body id="body">
+    <div id="pre">
+      <div class="pre-container">
+          <div class="pre-centered">
+              <h2 class="text-white">Welcome to Chat Box</h2>
+              <hr class="border-white w-25 mb-5">
+              <input type="text" id="input-username" name="" value="" placeholder="Input your username" autofocus>
+
+              <button type="button" id="submit-username" class="">OK, That's me!</button>
+          </div>
+      </div>
+    </div>
+
+    <div id="main" class="wrapper">
+        <div class="topbar col-12">
+
+            <div class="menu-btn">
+               <img src="res/people.png" alt="people" id="people"/>
+            </div>
+
+            <ul id="menu">
+               <li class="menu-header">User List</li>
+                <li>Alex Lee</li>
+                <li>Sarah Lee</li>
+                <li>Sarah Lee</li>
+                <li>Sarah Lee</li>
+                <li>Sarah Lee</li>
+            </ul>
+
+            <h1 class="text-center">Chat Box</h1>
+        </div>
+        <div class="mainbar col-12">
+            <div class="mb-wrapper">
+               <div class="text-center connected-to">
+                   <div class="connected-username">
+                        Alex Lee
+                   </div>
+               </div>
+
+                <!--One Item/Question Box-->
+                <section id="request-box" class="mb-content wow fadeInUp text-left" data-wow-delay=".2s">
+                    <h4 id="request-header" class="r-username pb-1 pr-2 pl-2">Alex Lee</h4>
+                    <p id="request-msg" class="r-msg m-2 mt-3">Hey Bro! Long time no see! :)</p>
+                </section>
+
+                <!--One Item/Question Box-->
+                <section id="request-box2" class="mb-content wow fadeInUp text-right" data-wow-delay=".2s">
+                   <h4 id="request-header2" class="r-username pb-1 pr-2 pl-2">Sarah Lee</h4>
+                   <p id="request-msg2" class="r-msg m-2 mt-3">Yo!</p>
+                </section>
+
+
+            </div>
+        </div>
+        <div class="bottombar fixed-bottom">
+            <div class="bb-wrapper">
+                <div class="ui-text-box">
+                    <input type="text" class="ui-text" placeholder="Input your message...">
+                </div>
+                <div class="ui-btn-box">
+                    <button type="submit" id="submit" class="ui-btn btn-lg btn-outline-dark">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+             integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+             crossorigin="anonymous"></script>
+     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"-->
+             <!--integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"-->
+             <!--crossorigin="anonymous"></script>-->
+     <!--<script src="js/bootstrap.min.js"></script>-->
+    <script src="js/main.js"></script>
+    <script src="js/WOW.min.js"></script>
+    <script>
+        new WOW().init();
+        var socket = new WebSocket("ws://localhost:8080")
+    </script>
+
+</body>
+</html>

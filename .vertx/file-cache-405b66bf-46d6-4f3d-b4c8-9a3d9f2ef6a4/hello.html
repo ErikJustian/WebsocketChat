@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <input type="text" id="message">
+    <button type="button" onclick="sendMessage()">Send</button>
+    <script>
+        var socket = new WebSocket("ws://localhost:8080")
+
+        socket.onmessage = function (ev) {
+            if (ev.data instanceof Blob) {
+                var reader = new FileReader()
+                reader.onload = function() {
+                    var json = JSON.parse(reader.result)
+                    processJson(json)
+                }
+                reader.readAsText(ev.data)
+            }
+        }
+
+        function processJson(json) {
+            var clazz = json['@class']
+            handlers = [
+                {
+                    '@class':
+                        'com.desdulianto.learning.imvertx.packet.LoginNotification',
+                    handler: loginNotif
+                }
+            ]
+
+            var handler = handlers.find(function(x) {return x['@class'] === clazz})
+            if (handler !== undefined)
+                handler.handler(json)
+            else
+                // buka web developer tool web console
+                console.log(json)
+        }
+
+        function loginNotif(json) {
+            alert(json.user.username + ' becomes online')
+        }
+
+        function sendMessage() {
+            var input = document.querySelector('#message')
+            var text = input.value
+            var loginMessage = {
+                '@class': 'com.desdulianto.learning.imvertx.packet.LoginMessage',
+                username: text,
+                password: ''
+            }
+            socket.send(JSON.stringify(loginMessage))
+            input.value = ''
+            input.focus()
+        }
+    </script>
+</body>
+</html>
