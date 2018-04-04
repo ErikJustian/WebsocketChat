@@ -258,7 +258,6 @@
         }
         // notifikasi user keluar
         function logoutNotif(json) {
-            console.log(json['user']['username'])
             // jika sedang buka chatroom target
             if(json['user']['username'] == target) {
                 wrapper = document.createElement('section')
@@ -294,6 +293,8 @@
             addChat("from", json['from'], json['message'])
             if(json['from'] == target) {
                 appendChat("from", json["message"])
+            } else {
+                document.getElementById(json['from']).classList.add
             }
         }
 
